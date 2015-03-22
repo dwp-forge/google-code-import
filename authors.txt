@@ -1,0 +1,3 @@
+ostrovsm = Mykola Ostrovskyy <spambox03@mail.ru>
+ostrovsm@gmail.com = Mykola Ostrovskyy <spambox03@mail.ru>
+(no author) = Mykola Ostrovskyy <spambox03@mail.ru>
