@@ -32,6 +32,25 @@ clone_svn_to_git()
     git svn clone "file://${svn_path}" -T trunk -b branches -t tags --authors-file="${base_path}/authors.txt" --prefix=svn/ "${git_path}"
 }
 
+update_branch()
+{(
+    cd "${git_path}"
+
+    local svn_branch="$1"
+    local git_branch="$2"
+
+    echo "Updating branch ${svn_branch}"
+
+    if [[ "$(git rev-parse --verify --quiet "${git_branch}")" == "" ]] ; then
+        git checkout -b "${git_branch}" "${svn_branch}"
+    else
+        git checkout "${git_branch}"
+        git reset --hard "${svn_branch}"
+    fi
+
+    git filter-branch -f --msg-filter "php \"${base_path}/rename.php\""
+)}
+
 main()
 {
     local base_path=$(readlink -f $(dirname $BASH_SOURCE))
@@ -41,6 +60,8 @@ main()
 
     fetch_svn || return 1
     clone_svn_to_git || return 1
+
+    update_branch "svn/trunk" "master"
 }
 
 main "$@"

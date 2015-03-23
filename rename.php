@@ -20,7 +20,9 @@ function is_empty($message) {
 
 function remove_minors($message) {
     static $minors = array(
+        "/^\s*$/",
         "/^. Spaces\n/",
+        "/^. Typo\n/",
         "/^. Version\n/",
         "/^. Clean-up\n/",
         "/^. Comments\n/",
@@ -52,8 +54,8 @@ function remove_minors($message) {
 
 function translate_title($message, $revision) {
     static $replace = array(
-        "/^(?:20|26|128|135|290|300|302):. (.+)\n/" => "\\1",
-        "/^\d+:! (?:Allow|Ensure|Fix|Make|Prevent|Reset|Suppress|Verify)( .+)\n/" => "\\1\\2",
+        "/^(?:20|26|128|135|208|210|290|300|302):. (.+)\n/" => "\\1",
+        "/^\d+:! (Allow|Check|Ensure|Fix|Make|Prevent|Reset|Suppress|Verify)( .+)\n/" => "\\1\\2",
         "/^\d+:\* Comments\n/" => "Updated comments",
         "/^\d+:\* Naming\n/" => "Updated naming",
         "/^\d+:\* Version\n/i" => "Version update",
@@ -76,12 +78,15 @@ function translate($message, $revision) {
         "11" => array("+ Application request parsing\n", "+ Indication of applied matches\n"),
         "38" => "Version update",
         "40" => "Updated formatting and comments",
-        "90" => "Clean-up",
+        "68" => "Added View & Edit links",
+        "155" => array("Embed notes on every occurrence\n\n", "Don't remove embedded notes from the array and embed them on every\n", "occurrence. This will prevent loosing the note text in the next scope.\n"),
         "156" => "More spaces",
-        "304" => array("Fixed general settings (issue 7)\n\n", "Settings from the general configuration section were ignored\n"),
+        "204" => array("Scroll to the top of the page after sending the settings\n\n", "This allows to show the communication status.\n"),
+        "304" => array("Fixed general settings (issue 7)\n\n", "Settings from the general configuration section were ignored.\n"),
         "313" => "Initial commit",
         "322" => "Fixed PHP5 syntax",
-        "353" => array("Removed definition of DOKU_PLUGIN\n\n", "It should be already defined when plugin is loaded\n"),
+        "346" => array("Reset internal state before handling every PARSER_HANDLER_DONE event\n\n", "Include plugin compatibility."),
+        "353" => array("Removed definition of DOKU_PLUGIN\n\n", "It should be already defined when plugin is loaded.\n"),
         "354" => array("Fixed first reference instruction lookup\n\n", "Look for the first reference instruction i.s.o. assuming\nthat it will be the first one in the calls array.\n"),
         "401" => "Fixed JSON corruprion by webhost servers",
         "466" => "Added BibTeX parser",
