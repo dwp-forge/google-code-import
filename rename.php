@@ -75,10 +75,12 @@ function translate_title($message, $revision) {
 function translate($message, $revision) {
     static $replace = array(
         "2" => "Added columns plugin",
+        "9" => array("Fixed preview of big text blocks\n\n", "Text will wrap to multiple lines.\n"),
         "11" => array("+ Application request parsing\n", "+ Indication of applied matches\n"),
         "38" => "Version update",
         "40" => "Updated formatting and comments",
         "68" => "Added View & Edit links",
+        "69" => "Release of 2009-02-14",
         "155" => array("Embed notes on every occurrence\n\n", "Don't remove embedded notes from the array and embed them on every\n", "occurrence. This will prevent loosing the note text in the next scope.\n"),
         "156" => "More spaces",
         "204" => array("Scroll to the top of the page after sending the settings\n\n", "This allows to show the communication status.\n"),
