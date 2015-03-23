@@ -40,7 +40,10 @@ clone_svn_to_git()
 filter_branch()
 {
     git filter-branch "$@"
-    git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+
+    if [[ "$(git for-each-ref --format="%(refname)" refs/original/)" != "" ]] ; then
+        git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+    fi
 }
 
 update_branch()
@@ -65,11 +68,16 @@ update_branch()
         git reset --hard "${svn_branch}"
     fi
 
+    local commit_range
+
     if [[ "${commits}" != "" ]] ; then
-        filter_branch --msg-filter "php \"${base_path}/rename.php\"" "${git_branch}~${commits}..${git_branch}"
+        commit_range="${git_branch}~${commits}..${git_branch}"
     else
-        filter_branch --msg-filter "php \"${base_path}/rename.php\"" "${git_branch}"
+        commit_range="${git_branch}"
     fi
+
+    filter_branch --msg-filter "php \"${base_path}/rename.php\"" "${commit_range}"
+    filter_branch --env-filter 'export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"' "${commit_range}"
 )}
 
 rebase_branch()
@@ -90,6 +98,7 @@ rebase_branch()
     fi
 
     git rebase --keep-empty --onto "${target_commit}" "${branch}~${commits}" "${branch}"
+    filter_branch --env-filter 'export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"' "${branch}~${commits}..${branch}"
 )}
 
 delete_branch()
