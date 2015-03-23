@@ -2,9 +2,6 @@
 
 fetch_svn()
 {
-    local svn_url="$1"
-    local svn_path="$2"
-
     echo "Fetching SVN repository to ${svn_path}"
 
     if [[ -e "${svn_path}" ]] ; then
@@ -26,17 +23,13 @@ fetch_svn()
 
 clone_svn_to_git()
 {
-    local svn_path="$1"
-    local git_path="$2"
-    local authors="$3"
-
     echo "Cloning SVN repository to Git ${git_path}"
 
     if [[ -e "${git_path}" ]] ; then
         rm -rf "${git_path}"
     fi
 
-    git svn clone "file://${svn_path}" -T trunk -b branches -t tags --authors-file="${authors}" --prefix=svn/ "${git_path}"
+    git svn clone "file://${svn_path}" -T trunk -b branches -t tags --authors-file="${base_path}/authors.txt" --prefix=svn/ "${git_path}"
 }
 
 main()
@@ -46,8 +39,8 @@ main()
     local svn_path="${base_path}/dwp-forge-svn"
     local git_path="${base_path}/dwp-forge-git"
 
-    fetch_svn "${svn_url}" "${svn_path}" || return 1
-    clone_svn_to_git "${svn_path}" "${git_path}" "${base_path}/authors.txt" || return 1
+    fetch_svn || return 1
+    clone_svn_to_git || return 1
 }
 
 main "$@"
