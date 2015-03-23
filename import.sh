@@ -22,7 +22,7 @@ fetch_svn()
 }
 
 clone_svn_to_git()
-{
+{(
     echo "Cloning SVN repository to Git ${git_path}"
 
     if [[ -e "${git_path}" ]] ; then
@@ -30,7 +30,12 @@ clone_svn_to_git()
     fi
 
     git svn clone "file://${svn_path}" -T trunk -b branches -t tags --authors-file="${base_path}/authors.txt" --prefix=svn/ "${git_path}"
-}
+
+    cd "${git_path}"
+
+    git config user.name "Mykola Ostrovskyy"
+    git config user.email "spambox03@mail.ru"
+)}
 
 filter_branch()
 {
