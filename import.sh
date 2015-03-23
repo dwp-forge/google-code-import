@@ -32,6 +32,12 @@ clone_svn_to_git()
     git svn clone "file://${svn_path}" -T trunk -b branches -t tags --authors-file="${base_path}/authors.txt" --prefix=svn/ "${git_path}"
 }
 
+filter_branch()
+{
+    git filter-branch "$@"
+    git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+}
+
 update_branch()
 {(
     cd "${git_path}"
@@ -48,7 +54,7 @@ update_branch()
         git reset --hard "${svn_branch}"
     fi
 
-    git filter-branch -f --msg-filter "php \"${base_path}/rename.php\""
+    filter_branch --msg-filter "php \"${base_path}/rename.php\""
 )}
 
 main()
