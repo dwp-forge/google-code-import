@@ -96,7 +96,7 @@ function translate($message, $revision) {
         } else {
             $message = array($replace[$revision]);
         }
-    } else {
+    } elseif (!is_empty($message) && preg_match("/^[-+*!]/", $message[0]) == 1) {
         $majors = remove_minors($message);
 
         if (count($majors) == 1) {
@@ -111,22 +111,17 @@ function update($message, $revision) {
     // Remove empty line at the end
     array_pop($message);
 
-    $has_title = (!is_empty($message) && preg_match("/^\w/", $message[0]) == 1);
+    $message = translate($message, $revision);
 
-    if (!$has_title) {
-        $message = translate($message, $revision);
-        $has_title = (!is_empty($message) && preg_match("/^\w/", $message[0]) == 1);
-    }
-
-    if ($has_title) {
-        $message[0] = preg_replace("/(.+)\.(\s?)$/", "\\1\\2", $message[0]);
-        $message[0] = "r$revision: ${message[0]}";
-    } else {
-        if (is_empty($message)) {
-            $message = array("r$revision");
+    if (!is_empty($message)) {
+        if (preg_match("/^[-+*!]/", $message[0]) == 0) {
+            $message[0] = preg_replace("/(.+)\.(\s?)$/", "\\1\\2", $message[0]);
+            $message[0] = "r$revision: ${message[0]}";
         } else {
             array_unshift($message, "r$revision\n\n");
         }
+    } else {
+        $message = array("r$revision");
     }
 
     return $message;
