@@ -29,17 +29,22 @@ function remove_minors($message) {
     );
 
     while (count($message) > 1) {
+        $removed = false;
+
         foreach ($minors as $minor) {
             for ($i = 0; $i < count($message); $i++) {
                 if (preg_match($minor, $message[$i]) == 1) {
                     unset($message[$i]);
                     $message = array_values($message);
+                    $removed = true;
                     break 2;
                 }
             }
         }
 
-        break;
+        if (!$removed) {
+            break;
+        }
     }
 
     return $message;
