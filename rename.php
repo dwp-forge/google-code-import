@@ -106,18 +106,22 @@ function update($message, $revision) {
     // Remove empty line at the end
     array_pop($message);
 
-    $has_title = (preg_match("/^\w/", $message[0]) == 1);
+    $has_title = (!is_empty($message) && preg_match("/^\w/", $message[0]) == 1);
 
     if (!$has_title) {
         $message = translate($message, $revision);
-        $has_title = (preg_match("/^\w/", $message[0]) == 1);
+        $has_title = (!is_empty($message) && preg_match("/^\w/", $message[0]) == 1);
     }
 
     if ($has_title) {
         $message[0] = preg_replace("/(.+)\.(\s?)$/", "\\1\\2", $message[0]);
         $message[0] = "r$revision: ${message[0]}";
     } else {
-        array_unshift($message, "r$revision\n\n");
+        if (is_empty($message)) {
+            $message = array("r$revision");
+        } else {
+            array_unshift($message, "r$revision\n\n");
+        }
     }
 
     return $message;
@@ -128,6 +132,4 @@ $revision = get_svn_revision($message);
 
 error_log("\nRevision $revision");
 
-$message = is_empty($message) ? array("r$revision") : update($message, $revision);
-
-print(implode($message));
+print(implode(update($message, $revision)));
