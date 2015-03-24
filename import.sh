@@ -135,7 +135,8 @@ main()
     fetch_svn || return 1
     clone_svn_to_git || return 1
 
-    update_branch "svn/trunk" "master"
+    update_branch "svn/trunk" "master" &&
+    delete_branch "svn/trunk"
 
     splice_branch "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" 1 "master" r20
     splice_branch "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" 1 "master" r29
