@@ -146,6 +146,8 @@ main()
     splice_branch "svn/tags/tablewidth-0902141526" "tags-tablewidth-0902141526" 1 "master" r62
     splice_branch "svn/tags/tablewidth-1011181526" "tags-tablewidth-1011181526" 1 "master" r399
     splice_branch "svn/tags/tablewidth-1312031348" "tags-tablewidth-1312031348" 1 "master" r518
+
+    splice_branch "svn/tags/replace-0904131936" "tags-replace-0904131936" 1 "master" r148
 }
 
 main "$@"
