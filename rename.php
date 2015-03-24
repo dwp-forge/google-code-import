@@ -84,6 +84,8 @@ function translate($message, $revision) {
         "155" => array("Embed notes on every occurrence\n\n", "Don't remove embedded notes from the array and embed them on every\n", "occurrence. This will prevent loosing the note text in the next scope.\n"),
         "156" => "More spaces",
         "204" => array("Scroll to the top of the page after sending the settings\n\n", "This allows to show the communication status.\n"),
+        "228" => "First column knows width of each column of the block",
+        "232" => array("Omit width attribute for 100% tables\n\n", "Rely on align=margins instead.\n"),
         "304" => array("Fixed general settings (issue 7)\n\n", "Settings from the general configuration section were ignored.\n"),
         "313" => "Initial commit",
         "322" => "Fixed PHP5 syntax",
