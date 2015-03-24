@@ -98,6 +98,7 @@ rebase_branch()
     local commits="$2"
     local target_branch="$3"
     local revision="$4"
+    local subtree="$5"
     local target_commit=$(get_revision_commit "${target_branch}" ${revision})
 
     echo "Rebasing branch ${branch}"
@@ -107,7 +108,12 @@ rebase_branch()
         return 1
     fi
 
-    git rebase --keep-empty --onto "${target_commit}" "${branch}~${commits}" "${branch}"
+    if [[ "${subtree}" != "" ]] ; then
+        git rebase --keep-empty --strategy-option="subtree=${subtree}" --onto "${target_commit}" "${branch}~${commits}" "${branch}" || return 1
+    else
+        git rebase --keep-empty --onto "${target_commit}" "${branch}~${commits}" "${branch}" || return 1
+    fi
+
     reset_dates "${branch}~${commits}..${branch}"
 )}
 
@@ -136,21 +142,8 @@ merge_branch()
 
     local merge_commit=$(git log -1 --pretty=format:%h)
 
-    git rebase --onto ${merge_commit} ${target_commit} "${target_branch}"
+    git rebase --onto ${merge_commit} ${target_commit} "${target_branch}" &&
     reset_dates "${merge_commit}..${target_branch}"
-)}
-
-move_commits()
-{(
-    cd "${git_path}"
-
-    local branch="$1"
-    local commits="$2"
-    local location="$3"
-
-    echo "Moving commits on branch ${branch} to ${location}"
-
-    filter_branch --tree-filter "\"${base_path}/move.sh\" \"${location}\"" "${branch}~${commits}..${branch}"
 )}
 
 delete_branch()
@@ -169,17 +162,12 @@ splice_branch()
     local source_branch="$1"
     local branch="$2"
     local commits="$3"
-    local location="$4"
+    local subtree="$4"
     local target_branch="$5"
     local target_revision="$6"
 
-    update_branch "${source_branch}" "${branch}" ${commits} || return 1
-
-    if [[ "${location}" != "" ]] ; then
-        move_commits "${branch}" ${commits} "${location}" || return 1
-    fi
-
-    rebase_branch "${branch}" ${commits} "${target_branch}" ${target_revision} &&
+    update_branch "${source_branch}" "${branch}" ${commits} &&
+    rebase_branch "${branch}" ${commits} "${target_branch}" ${target_revision} "${subtree}" &&
     delete_branch "${source_branch}"
 )}
 
@@ -203,6 +191,8 @@ main()
 
     splice_branch "svn/qna-custom_headers" "qna-custom_headers" 8 "qna" "master" r327
     merge_branch "qna-custom_headers" "master" r337
+
+    splice_branch "svn/columns3" "columns3" 46 "columns" "master" r76
 
     splice_tag "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" "master" r20
     splice_tag "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" "master" r29
