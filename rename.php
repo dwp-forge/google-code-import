@@ -88,6 +88,7 @@ function translate($message, $revision) {
         "313" => "Initial commit",
         "322" => "Fixed PHP5 syntax",
         "346" => array("Reset internal state before handling every PARSER_HANDLER_DONE event\n\n", "Include plugin compatibility."),
+        "350" => array("Fixed page cache invalidation\n\n", "Make sure that metadata for currently processed page affects caching\nonly of that page.\n"),
         "353" => array("Removed definition of DOKU_PLUGIN\n\n", "It should be already defined when plugin is loaded.\n"),
         "354" => array("Fixed first reference instruction lookup\n\n", "Look for the first reference instruction i.s.o. assuming\nthat it will be the first one in the calls array.\n"),
         "401" => "Fixed JSON corruprion by webhost servers",

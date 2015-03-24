@@ -214,6 +214,9 @@ main()
     splice_tag "svn/tags/tablewidth-1312031348" "tags-tablewidth-1312031348" "master" r518
 
     splice_tag "svn/tags/replace-0904131936" "tags-replace-0904131936" "master" r148
+
+    splice_tag "svn/tags/qna-0912131824" "tags-qna-0912131824" "master" r339
+    splice_tag "svn/tags/qna-1502160108" "tags-qna-1502160108" "master" r523
 }
 
 main "$@"
