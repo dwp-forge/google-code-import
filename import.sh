@@ -88,7 +88,7 @@ rebase_branch()
     local commits="$2"
     local target_branch="$3"
     local revision="$4"
-    local target_commit=$(git log --oneline "${target_branch}" | grep -P " ${revision}[: ]" | sed -re "s/^([0-9a-f]+) .*/\1/")
+    local target_commit=$(git log --oneline "${target_branch}" | grep -P " ${revision}(:|$)" | sed -re "s/^([0-9a-f]+) .*/\1/")
 
     echo "Rebasing branch ${branch}"
 
@@ -142,6 +142,10 @@ main()
     splice_branch "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" 1 "master" r29
     splice_branch "svn/tags/batchedit-0812071806" "tags-batchedit-0812071806" 1 "master" r35
     splice_branch "svn/tags/batchedit-0902141955" "tags-batchedit-0902141955" 1 "master" r68
+
+    splice_branch "svn/tags/tablewidth-0902141526" "tags-tablewidth-0902141526" 1 "master" r62
+    splice_branch "svn/tags/tablewidth-1011181526" "tags-tablewidth-1011181526" 1 "master" r399
+    splice_branch "svn/tags/tablewidth-1312031348" "tags-tablewidth-1312031348" 1 "master" r518
 }
 
 main "$@"
