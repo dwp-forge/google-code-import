@@ -111,6 +111,19 @@ rebase_branch()
     reset_dates "${branch}~${commits}..${branch}"
 )}
 
+move_commits()
+{(
+    cd "${git_path}"
+
+    local branch="$1"
+    local commits="$2"
+    local location="$3"
+
+    echo "Moving commits on branch ${branch} to ${location}"
+
+    filter_branch --tree-filter "\"${base_path}/move.sh\" \"${location}\"" "${branch}~${commits}..${branch}"
+)}
+
 delete_branch()
 {(
     cd "${git_path}"
@@ -127,13 +140,24 @@ splice_branch()
     local source_branch="$1"
     local branch="$2"
     local commits="$3"
-    local target_branch="$4"
-    local target_revision="$5"
+    local location="$4"
+    local target_branch="$5"
+    local target_revision="$6"
 
-    update_branch "${source_branch}" "${branch}" ${commits} &&
+    update_branch "${source_branch}" "${branch}" ${commits} || return 1
+
+    if [[ "${location}" != "" ]] ; then
+        move_commits "${branch}" ${commits} "${location}" || return 1
+    fi
+
     rebase_branch "${branch}" ${commits} "${target_branch}" ${target_revision} &&
     delete_branch "${source_branch}"
 )}
+
+splice_tag()
+{
+    splice_branch "$1" "$2" 1 "" "$3" "$4"
+}
 
 main()
 {
@@ -148,16 +172,16 @@ main()
     update_branch "svn/trunk" "master" &&
     delete_branch "svn/trunk"
 
-    splice_branch "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" 1 "master" r20
-    splice_branch "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" 1 "master" r29
-    splice_branch "svn/tags/batchedit-0812071806" "tags-batchedit-0812071806" 1 "master" r35
-    splice_branch "svn/tags/batchedit-0902141955" "tags-batchedit-0902141955" 1 "master" r68
+    splice_tag "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" "master" r20
+    splice_tag "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" "master" r29
+    splice_tag "svn/tags/batchedit-0812071806" "tags-batchedit-0812071806" "master" r35
+    splice_tag "svn/tags/batchedit-0902141955" "tags-batchedit-0902141955" "master" r68
 
-    splice_branch "svn/tags/tablewidth-0902141526" "tags-tablewidth-0902141526" 1 "master" r62
-    splice_branch "svn/tags/tablewidth-1011181526" "tags-tablewidth-1011181526" 1 "master" r399
-    splice_branch "svn/tags/tablewidth-1312031348" "tags-tablewidth-1312031348" 1 "master" r518
+    splice_tag "svn/tags/tablewidth-0902141526" "tags-tablewidth-0902141526" "master" r62
+    splice_tag "svn/tags/tablewidth-1011181526" "tags-tablewidth-1011181526" "master" r399
+    splice_tag "svn/tags/tablewidth-1312031348" "tags-tablewidth-1312031348" "master" r518
 
-    splice_branch "svn/tags/replace-0904131936" "tags-replace-0904131936" 1 "master" r148
+    splice_tag "svn/tags/replace-0904131936" "tags-replace-0904131936" "master" r148
 }
 
 main "$@"
