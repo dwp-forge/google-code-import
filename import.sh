@@ -196,6 +196,15 @@ main()
     merge_branch "columns-odt-support" "columns-v3" r233
     merge_branch "qna-custom-headers" "master" r337
 
+    splice_tag "svn/tags/columns-0901311636" "tags-columns-0901311636" "master" r46
+    splice_tag "svn/tags/columns-0903011954" "tags-columns-0903011954" "columns-v3" r85
+    splice_tag "svn/tags/columns-0903151954" "tags-columns-0903151954" "columns-v3" r110
+    splice_tag "svn/tags/columns-0904041335" "tags-columns-0904041335" "columns-v3" r137
+    splice_tag "svn/tags/columns-0908221657" "tags-columns-0908221657" "columns-v3" r237
+    splice_tag "svn/tags/columns-0908301834" "tags-columns-0908301834" "columns-v3" r250
+    splice_tag "svn/tags/columns-1209232308" "tags-columns-1209232308" "columns-v3" r508
+    splice_tag "svn/tags/columns-1210131603" "tags-columns-1210131603" "columns-v3" r511
+
     splice_tag "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" "master" r20
     splice_tag "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" "master" r29
     splice_tag "svn/tags/batchedit-0812071806" "tags-batchedit-0812071806" "master" r35
