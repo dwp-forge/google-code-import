@@ -111,6 +111,35 @@ rebase_branch()
     reset_dates "${branch}~${commits}..${branch}"
 )}
 
+merge_branch()
+{(
+    cd "${git_path}"
+
+    local branch="$1"
+    local target_branch="$2"
+    local revision="$3"
+    local target_commit=$(get_revision_commit "${target_branch}" ${revision})
+
+    if [[ "${target_commit}" == "" ]] ; then
+        echo "Failed to find revision ${revision} on ${target_branch}"
+        return 1
+    fi
+
+    (
+        export GIT_MESSAGE=$(git log ${target_commit} -1 --pretty=format:%B)
+        export GIT_AUTHOR_DATE=$(git log ${target_commit} -1 --pretty=format:%ad)
+        export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
+
+        git checkout ${target_commit}~1
+        git merge "${branch}" --commit -m "${GIT_MESSAGE}"
+    )
+
+    local merge_commit=$(git log -1 --pretty=format:%h)
+
+    git rebase --onto ${merge_commit} ${target_commit} "${target_branch}"
+    reset_dates "${merge_commit}..${target_branch}"
+)}
+
 move_commits()
 {(
     cd "${git_path}"
@@ -171,6 +200,9 @@ main()
 
     update_branch "svn/trunk" "master" &&
     delete_branch "svn/trunk"
+
+    splice_branch "svn/qna-custom_headers" "qna-custom_headers" 8 "qna" "master" r327
+    merge_branch "qna-custom_headers" "master" r337
 
     splice_tag "svn/tags/batchedit-0810251603" "tags-batchedit-0810251603" "master" r20
     splice_tag "svn/tags/batchedit-0810270018" "tags-batchedit-0810270018" "master" r29
