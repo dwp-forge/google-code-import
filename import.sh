@@ -46,6 +46,11 @@ filter_branch()
     fi
 }
 
+reset_dates()
+{
+    filter_branch --env-filter 'export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"' "$1"
+}
+
 update_branch()
 {(
     cd "${git_path}"
@@ -77,8 +82,13 @@ update_branch()
     fi
 
     filter_branch --msg-filter "php \"${base_path}/rename.php\"" "${commit_range}"
-    filter_branch --env-filter 'export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"' "${commit_range}"
+    reset_dates "${commit_range}"
 )}
+
+get_revision_commit()
+{
+    git log --oneline "$1" | grep -P " $2(:|$)" | sed -re "s/^([0-9a-f]+) .*/\1/"
+}
 
 rebase_branch()
 {(
@@ -88,7 +98,7 @@ rebase_branch()
     local commits="$2"
     local target_branch="$3"
     local revision="$4"
-    local target_commit=$(git log --oneline "${target_branch}" | grep -P " ${revision}(:|$)" | sed -re "s/^([0-9a-f]+) .*/\1/")
+    local target_commit=$(get_revision_commit "${target_branch}" ${revision})
 
     echo "Rebasing branch ${branch}"
 
@@ -98,7 +108,7 @@ rebase_branch()
     fi
 
     git rebase --keep-empty --onto "${target_commit}" "${branch}~${commits}" "${branch}"
-    filter_branch --env-filter 'export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"' "${branch}~${commits}..${branch}"
+    reset_dates "${branch}~${commits}..${branch}"
 )}
 
 delete_branch()
