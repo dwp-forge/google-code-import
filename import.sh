@@ -216,6 +216,8 @@ main()
 
     splice_tag "svn/tags/replace-0904131936" "tags-replace-0904131936" "master" r148
 
+    splice_tag "svn/tags/changes-0909162356" "tags-changes-0909162356" "master" r290
+
     splice_tag "svn/tags/qna-0912131824" "tags-qna-0912131824" "master" r339
     splice_tag "svn/tags/qna-1502160108" "tags-qna-1502160108" "master" r523
 }
