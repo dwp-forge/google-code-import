@@ -81,11 +81,16 @@ function translate($message, $revision) {
         "40" => "Updated formatting and comments",
         "68" => "Added View & Edit links",
         "69" => "Release of 2009-02-14",
+        "86" => array("Release of 2009-03-01\n\n", "First alpha version of columns3.\n"),
+        "128" => array("Fixed section editing\n\n", "Look-ahead patterns are removed to allow syntax matching\nduring section editing.\n"),
+        "134" => array("buildLayout() refactoring\n\n", "Preparation for continuations support.\n"),
         "155" => array("Embed notes on every occurrence\n\n", "Don't remove embedded notes from the array and embed them on every\n", "occurrence. This will prevent loosing the note text in the next scope.\n"),
         "156" => "More spaces",
         "204" => array("Scroll to the top of the page after sending the settings\n\n", "This allows to show the communication status.\n"),
+        "225" => array("Reset the state before parsing\n\n", "Support for multiple handle() calls, which can happen\nwith Include plugin.\n"),
         "228" => "First column knows width of each column of the block",
         "232" => array("Omit width attribute for 100% tables\n\n", "Rely on align=margins instead.\n"),
+        "234" => array("Keep track of opened sections (issue 1)\n\n", "Fixes broken page layout if the first heading is within a column.\n"),
         "304" => array("Fixed general settings (issue 7)\n\n", "Settings from the general configuration section were ignored.\n"),
         "313" => "Initial commit",
         "322" => "Fixed PHP5 syntax",
@@ -125,7 +130,7 @@ function update($message, $revision) {
 
     if (!is_empty($message)) {
         if (preg_match("/^[-+*!]/", $message[0]) == 0) {
-            $message[0] = preg_replace("/(.+)\.(\s?)$/", "\\1\\2", $message[0]);
+            $message[0] = preg_replace("/(.+)\.(\s*)$/", "\\1\\2", $message[0]);
             $message[0] = "r$revision: ${message[0]}";
         } else {
             array_unshift($message, "r$revision\n\n");
