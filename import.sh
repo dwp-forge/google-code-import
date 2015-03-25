@@ -190,10 +190,14 @@ main()
     delete_branch "svn/trunk"
 
     splice_branch "svn/columns3" "columns-v3" 46 "columns" "master" r76
-    splice_branch "svn/columns-odt_support" "columns-odt-support" 5 "columns" "columns-v3" r226
-    splice_branch "svn/qna-custom_headers" "qna-custom-headers" 8 "qna" "master" r327
 
+    splice_branch "svn/refnotes-inheritance" "refnotes-inheritance" 13 "refnotes" "master" r115
+    merge_branch "refnotes-inheritance" "master" r143
+
+    splice_branch "svn/columns-odt_support" "columns-odt-support" 5 "columns" "columns-v3" r226
     merge_branch "columns-odt-support" "columns-v3" r233
+
+    splice_branch "svn/qna-custom_headers" "qna-custom-headers" 8 "qna" "master" r327
     merge_branch "qna-custom-headers" "master" r337
 
     splice_tag "svn/tags/columns-0901311636" "tags-columns-0901311636" "master" r46
