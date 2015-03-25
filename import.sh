@@ -197,6 +197,9 @@ main()
     splice_branch "svn/columns-odt_support" "columns-odt-support" 5 "columns" "columns-v3" r226
     merge_branch "columns-odt-support" "columns-v3" r233
 
+    splice_branch "svn/refnotes-reference_database" "refnotes-reference-database" 15 "refnotes" "master" r244
+    merge_branch "refnotes-reference-database" "master" r270
+
     splice_branch "svn/qna-custom_headers" "qna-custom-headers" 8 "qna" "master" r327
     merge_branch "qna-custom-headers" "master" r337
 

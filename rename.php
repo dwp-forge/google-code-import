@@ -26,6 +26,7 @@ function remove_minors($message) {
         "/^. Version\n/",
         "/^. Clean-up\n/",
         "/^. Comments\n/",
+        "/^. Logging\n/",
         "/^. Formatting\n/",
         "/^. Naming\n/"
     );
@@ -54,7 +55,7 @@ function remove_minors($message) {
 
 function translate_title($message, $revision) {
     static $replace = array(
-        "/^(?:20|26|128|135|208|210|290|300|302):. (.+)\n/" => "\\1",
+        "/^(?:20|26|128|135|208|210|255|259|261|262|290|300|302):. (.+)\n/" => "\\1",
         "/^\d+:! (Allow|Check|Ensure|Fix|Make|Prevent|Reset|Suppress|Verify)( .+)\n/" => "\\1\\2",
         "/^\d+:\* Comments\n/" => "Updated comments",
         "/^\d+:\* Naming\n/" => "Updated naming",
@@ -95,6 +96,9 @@ function translate($message, $revision) {
         "228" => "First column knows width of each column of the block",
         "232" => array("Omit width attribute for 100% tables\n\n", "Rely on align=margins instead.\n"),
         "234" => array("Keep track of opened sections (issue 1)\n\n", "Fixes broken page layout if the first heading is within a column.\n"),
+        "263" => "Added handling of the note definitions",
+        "269" => array("Setup reference database\n\n", "Copy template to the reference database namespace on\nconfiguration save.\n"),
+        "270" => "Branch reference-database merged back to master",
         "304" => array("Fixed general settings (issue 7)\n\n", "Settings from the general configuration section were ignored.\n"),
         "313" => "Initial commit",
         "322" => "Fixed PHP5 syntax",
