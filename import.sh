@@ -137,8 +137,12 @@ merge_branch()
         export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
 
         git checkout ${target_commit}~1
-        git merge "${branch}" --commit -m "${GIT_MESSAGE}"
-    )
+        git merge "${branch}" --commit -m "${GIT_MESSAGE}" ||
+        (
+            git apply "${base_path}/patches/${revision}.patch" &&
+            git commit -am "${GIT_MESSAGE}"
+        )
+    ) || return 1
 
     local merge_commit=$(git log -1 --pretty=format:%h)
 
@@ -202,6 +206,9 @@ main()
 
     splice_branch "svn/qna-custom_headers" "qna-custom-headers" 8 "qna" "master" r327
     merge_branch "qna-custom-headers" "master" r337
+
+    splice_branch "svn/refnotes-refdb_cache_dependency" "refnotes-refdb-cache-dependency" 4 "refnotes" "master" r343
+    merge_branch "refnotes-refdb-cache-dependency" "master" r352
 
     splice_tag "svn/tags/columns-0901311636" "tags-columns-0901311636" "master" r46
     splice_tag "svn/tags/columns-0903011954" "tags-columns-0903011954" "columns-v3" r85

@@ -1,0 +1,33 @@
+From 9aff8cb31dd3f692147601df8ec2469bfd727533 Mon Sep 17 00:00:00 2001
+From: Mykola Ostrovskyy <spambox03@mail.ru>
+Date: Thu, 26 Mar 2015 16:22:58 +0200
+Subject: [PATCH] r352
+
+---
+ refnotes/action.php | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/refnotes/action.php b/refnotes/action.php
+index 6b2785b..5640af8 100644
+--- a/refnotes/action.php
++++ b/refnotes/action.php
+@@ -34,16 +34,10 @@ class action_plugin_refnotes extends DokuWiki_Action_Plugin {
+      * Register callbacks
+      */
+     public function register($controller) {
+-<<<<<<< HEAD
+         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'beforeAjaxCallUnknown');
+         $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'beforeTplMetaheaderOutput');
+         $controller->register_hook('PARSER_HANDLER_DONE', 'AFTER', $this, 'afterParserHandlerDone');
+-=======
+-        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'ajaxHandler');
+-        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'addAdminIncludes');
+-        $controller->register_hook('PARSER_HANDLER_DONE', 'AFTER', $this, 'processCallList');
+         $controller->register_hook('PARSER_CACHE_USE', 'BEFORE', $this, 'beforeParserCacheUse');
+->>>>>>> refnotes-refdb-cache-dependency
+     }
+ 
+     /**
+-- 
+1.9.1
+
