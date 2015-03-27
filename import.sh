@@ -37,13 +37,15 @@ clone_svn_to_git()
     git config user.email "spambox03@mail.ru"
 )}
 
+delete_refs()
+{
+    git for-each-ref --format="%(refname)" "$1" | xargs -rn 1 git update-ref -d
+}
+
 filter_branch()
 {
     git filter-branch "$@"
-
-    if [[ "$(git for-each-ref --format="%(refname)" refs/original/)" != "" ]] ; then
-        git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
-    fi
+    delete_refs "refs/original/"
 }
 
 reset_dates()
@@ -193,7 +195,7 @@ delete_branch()
 
     echo "Deleting branch ${branch}"
 
-    git for-each-ref --format="%(refname)" "refs/remotes/${branch}*" | xargs -n 1 git update-ref -d
+    delete_refs "refs/remotes/${branch}*"
 )}
 
 splice_branch()
@@ -214,6 +216,20 @@ splice_tag()
 {
     splice_branch "$1" "$2" 1 "" "$3" "$4"
 }
+
+clean_repo()
+{(
+    cd "${git_path}"
+
+    echo "Cleaning repository ${git_path}"
+
+    git reset --hard &&
+    delete_refs "refs/original/" &&
+    delete_refs "refs/heads/temp-*" &&
+    git reflog expire --expire=now --all &&
+    git gc --aggressive --prune=now &&
+    git checkout master
+)}
 
 main()
 {
@@ -304,6 +320,8 @@ main()
     delete_branch "svn/tags/refnotes-1111071939"
     delete_branch "svn/tags/refnotes-1204230046"
     delete_branch "svn/tags/refnotes-1204291450"
+
+    clean_repo
 }
 
 main "$@"
