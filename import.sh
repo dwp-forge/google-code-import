@@ -291,6 +291,19 @@ main()
 
     splice_tag "svn/tags/qna-0912131824" "tags-qna-0912131824" "master" r339
     splice_tag "svn/tags/qna-1502160108" "tags-qna-1502160108" "master" r523
+
+    splice_tag "svn/tags/refnotes-0903181339" "tags-refnotes-0903181339" "master" r111
+    splice_tag "svn/tags/refnotes-0908011250" "tags-refnotes-0908011250" "master" r222
+    splice_tag "svn/tags/refnotes-0909121625" "tags-refnotes-0909121625" "master" r275
+    splice_tag "svn/tags/refnotes-0910111658" "tags-refnotes-0910111658" "master" r308
+    splice_tag "svn/tags/refnotes-1004052043" "tags-refnotes-1004052043" "master" r361
+    splice_tag "svn/tags/refnotes-1207151516" "tags-refnotes-1207151516" "master" r504
+
+    delete_branch "svn/tags/refnotes-0908011230"
+    delete_branch "svn/tags/refnotes-0910111319"
+    delete_branch "svn/tags/refnotes-1111071939"
+    delete_branch "svn/tags/refnotes-1204230046"
+    delete_branch "svn/tags/refnotes-1204291450"
 }
 
 main "$@"
