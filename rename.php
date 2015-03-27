@@ -55,7 +55,7 @@ function remove_minors($message) {
 
 function translate_title($message, $revision) {
     static $replace = array(
-        "/^(?:20|26|128|135|208|210|255|259|261|262|290|300|302|345|347|348):. (.+)\n/" => "\\1",
+        "/^(?:20|26|128|135|208|210|255|259|261|262|290|300|302|345|347|348|368|381|392|395|418):. (.+)\n/" => "\\1",
         "/^\d+:! (Allow|Check|Ensure|Fix|Make|Prevent|Reset|Suppress|Verify)( .+)\n/" => "\\1\\2",
         "/^\d+:\* Comments\n/" => "Updated comments",
         "/^\d+:\* Naming\n/" => "Updated naming",
@@ -106,8 +106,13 @@ function translate($message, $revision) {
         "350" => array("Fixed page cache invalidation\n\n", "Make sure that metadata for currently processed page affects caching\nonly of that page.\n"),
         "352" => array("Branch refdb-cache-dependency is merged into master\n\n", "Introduce cache dependency between pages that use notes from the\nreference database and corresponding reference database pages.\n"),
         "353" => array("Removed definition of DOKU_PLUGIN\n\n", "It should be already defined when plugin is loaded.\n"),
-        "354" => array("Fixed first reference instruction lookup\n\n", "Look for the first reference instruction i.s.o. assuming\nthat it will be the first one in the calls array.\n"),
+        "354" => array("Fixed first reference instruction lookup\n\n", "Look for the first reference instruction i.s.o. assuming\nthat it will be the first one in the instructions array.\n"),
+        "370" => array("Store embedded note properties in references\n\n", "Properties of an embedded note are copied to the reference, which\ntriggered the embedding.\n"),
         "401" => "Fixed JSON corruprion by webhost servers",
+        "406" => array("Fixed default back-ref-format in configuration UI\n\n", "It was incorrectly displayed.\n"),
+        "421" => array("Branch dual-core is merged into structured-references\n\n", "Helper plugin is converted to a core component used by both syntax and\naction plugins.\n"),
+        "453" => array("Branch heavy-action is merged into structured-references\n\n", "Structured notes rendering is moved from syntax to action plugin.\n"),
+        "461" => "Branch structured-references is merged into master",
         "466" => "Added BibTeX parser",
         "488" => "Move version information to plugin.info.txt",
         "498" => "Added 'month' field support",

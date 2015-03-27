@@ -1,0 +1,38 @@
+From 78857a414d2864edb37a713c25dc947b0d8a9d8d Mon Sep 17 00:00:00 2001
+From: Mykola Ostrovskyy <spambox03@mail.ru>
+Date: Fri, 27 Mar 2015 13:12:46 +0200
+Subject: [PATCH] r453
+
+---
+ refnotes/note.php | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/refnotes/note.php b/refnotes/note.php
+index d91f61d..5f89a8b 100644
+--- a/refnotes/note.php
++++ b/refnotes/note.php
+@@ -185,7 +185,7 @@ class refnotes_note extends refnotes_refnote {
+ 
+         if ($reference->isBackReferenced()) {
+             $this->reference[] = $reference;
+-            $this->rendered = false;
++            $this->processed = false;
+         }
+     }
+ 
+@@ -217,12 +217,8 @@ class refnotes_renderer_note extends refnotes_note {
+     public function render() {
+         $html = $this->scope->getRenderer()->renderNote($this, $this->reference);
+ 
+-<<<<<<< HEAD
+         $this->reference = array();
+-        $this->rendered = true;
+-=======
+         $this->processed = true;
+->>>>>>> refnotes-heavy-action
+ 
+         return $html;
+     }
+-- 
+1.9.1
+

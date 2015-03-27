@@ -87,7 +87,7 @@ update_branch()
 
 get_revision_commit()
 {
-    git log --oneline "$1" | grep -P " $2(:|$)" | sed -re "s/^([0-9a-f]+) .*/\1/"
+    git log --oneline "$1" | grep -P "^[0-9a-f]+ $2(:|$)" | sed -re "s/^([0-9a-f]+) .*/\1/"
 }
 
 rebase_branch()
@@ -109,9 +109,9 @@ rebase_branch()
     fi
 
     if [[ "${subtree}" != "" ]] ; then
-        git rebase --keep-empty --strategy-option="subtree=${subtree}" --onto "${target_commit}" "${branch}~${commits}" "${branch}" || return 1
+        git rebase --keep-empty --strategy-option="subtree=${subtree}" --onto ${target_commit} "${branch}~${commits}" "${branch}" || return 1
     else
-        git rebase --keep-empty --onto "${target_commit}" "${branch}~${commits}" "${branch}" || return 1
+        git rebase --keep-empty --onto ${target_commit} "${branch}~${commits}" "${branch}" || return 1
     fi
 
     reset_dates "${branch}~${commits}..${branch}"
@@ -126,9 +126,24 @@ merge_branch()
     local revision="$3"
     local target_commit=$(get_revision_commit "${target_branch}" ${revision})
 
+    echo "Merging branch ${branch} into ${target_branch}"
+
     if [[ "${target_commit}" == "" ]] ; then
         echo "Failed to find revision ${revision} on ${target_branch}"
         return 1
+    fi
+
+    local checkout_commit
+
+    if [[ "${4}" != "" && "${5}" != "" ]] ; then
+        checkout_commit=$(get_revision_commit "${4}" ${5})
+
+        if [[ "${checkout_commit}" == "" ]] ; then
+            echo "Failed to find revision ${5} on ${4}"
+            return 1
+        fi
+    else
+        checkout_commit=${target_commit}~1
     fi
 
     (
@@ -136,7 +151,7 @@ merge_branch()
         export GIT_AUTHOR_DATE=$(git log ${target_commit} -1 --pretty=format:%ad)
         export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
 
-        git checkout ${target_commit}~1
+        git checkout ${checkout_commit}
         git merge "${branch}" --commit -m "${GIT_MESSAGE}" ||
         (
             git apply "${base_path}/patches/${revision}.patch" &&
@@ -148,6 +163,26 @@ merge_branch()
 
     git rebase --onto ${merge_commit} ${target_commit} "${target_branch}" &&
     reset_dates "${merge_commit}..${target_branch}"
+)}
+
+create_temp_branch()
+{(
+    cd "${git_path}"
+
+    local branch="$1"
+    local revision="$2"
+    local commit=$(get_revision_commit "${branch}" ${revision})
+
+    if [[ "${commit}" == "" ]] ; then
+        echo "Failed to find revision ${revision} on ${branch}"
+        return 1
+    fi
+
+    if [[ "$(git rev-parse --verify --quiet "temp-${revision}")" != "" ]] ; then
+        git branch -D "temp-${revision}"
+    fi
+
+    git branch "temp-${revision}" ${commit}
 )}
 
 delete_branch()
@@ -209,6 +244,28 @@ main()
 
     splice_branch "svn/refnotes-refdb_cache_dependency" "refnotes-refdb-cache-dependency" 4 "refnotes" "master" r343
     merge_branch "refnotes-refdb-cache-dependency" "master" r352
+
+    update_branch "svn/refnotes-structured_references" "refnotes-structured-references" 55
+    update_branch "svn/refnotes-dual_core" "refnotes-dual-core" 9
+    update_branch "svn/refnotes-heavy_action" "refnotes-heavy-action" 23
+
+    create_temp_branch "refnotes-structured-references" r413
+    create_temp_branch "refnotes-structured-references" r421
+    create_temp_branch "refnotes-structured-references" r433
+    create_temp_branch "refnotes-structured-references" r453
+
+    rebase_branch "temp-r413" 41 "master" r361 "refnotes"
+    rebase_branch "refnotes-dual-core" 9 "temp-r413" r409 "refnotes"
+    merge_branch "refnotes-dual-core" "temp-r421" r421 "temp-r413" r413
+    rebase_branch "temp-r433" 6 "temp-r421" r421 "refnotes"
+    rebase_branch "refnotes-heavy-action" 23 "temp-r433" r426 "refnotes"
+    merge_branch "refnotes-heavy-action" "temp-r453" r453 "temp-r433" r433
+    rebase_branch "refnotes-structured-references" 6 "temp-r453" r453 "refnotes"
+    merge_branch "refnotes-structured-references" "master" r461
+
+    delete_branch "svn/refnotes-dual_core"
+    delete_branch "svn/refnotes-heavy_action"
+    delete_branch "svn/refnotes-structured_references"
 
     splice_tag "svn/tags/columns-0901311636" "tags-columns-0901311636" "master" r46
     splice_tag "svn/tags/columns-0903011954" "tags-columns-0903011954" "columns-v3" r85
