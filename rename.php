@@ -78,6 +78,7 @@ function translate($message, $revision) {
         "2" => "Added columns plugin",
         "9" => array("Fixed preview of big text blocks\n\n", "Text will wrap to multiple lines.\n"),
         "11" => array("+ Application request parsing\n", "+ Indication of applied matches\n"),
+        "37" => "Release of 2008-12-07",
         "38" => "Version update",
         "40" => "Updated formatting and comments",
         "68" => "Added View & Edit links",
@@ -119,6 +120,7 @@ function translate($message, $revision) {
         "488" => "Move version information to plugin.info.txt",
         "498" => "Added 'month' field support",
         "504" => "Updated includes",
+        "524" => "Release of 2015-02-16",
     );
 
     if (array_key_exists($revision, $replace)) {

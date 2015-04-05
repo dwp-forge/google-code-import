@@ -50,7 +50,7 @@ filter_branch()
 
 reset_dates()
 {
-    filter_branch --env-filter 'export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"' "$1"
+    filter_branch --env-filter 'export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"' "$@"
 }
 
 update_branch()
@@ -199,7 +199,7 @@ delete_branch()
 )}
 
 splice_branch()
-{(
+{
     local source_branch="$1"
     local branch="$2"
     local commits="$3"
@@ -210,7 +210,7 @@ splice_branch()
     update_branch "${source_branch}" "${branch}" ${commits} &&
     rebase_branch "${branch}" ${commits} "${target_branch}" ${target_revision} "${subtree}" &&
     delete_branch "${source_branch}"
-)}
+}
 
 splice_tag()
 {
@@ -229,6 +229,75 @@ clean_repo()
     git reflog expire --expire=now --all &&
     git gc --aggressive --prune=now &&
     git checkout master
+)}
+
+clone_repo()
+{(
+    local clone="$1"
+
+    echo "Cloning repository ${git_path} to ${clone}"
+
+    if [[ -e "${clone}" ]] ; then
+        rm -rf "${clone}"
+    fi
+
+    cp -R "${git_path}" "${clone}"
+)}
+
+create_tags()
+{(
+    cd "${git_path}"
+
+    local plugin="$1"
+    local branch
+
+    echo "Creating tags for ${plugin}"
+
+    for branch in $(git for-each-ref --format="%(refname)" "refs/heads/tags-${plugin}-*" | sed -re "s/refs\/heads\///") ; do
+        local tag=t.$(echo ${branch} | sed -re "s/tags-${plugin}-(.+)/\1/")
+
+        (
+            export GIT_MESSAGE=$(git log ${branch} -1 --pretty=format:%B | sed -re "s/^r[0-9]+: //")
+            export GIT_AUTHOR_DATE=$(git log ${branch} -1 --pretty=format:%ad)
+            export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
+
+            local release=$(echo "${GIT_MESSAGE}" | grep Release | sed -re "s/Release (of )?([-0-9]+).*/\2/")
+
+            if [[ "${release}" != "" ]] ; then
+                tag="v.${release}"
+            fi
+
+            git tag -a "${tag}" -m "${GIT_MESSAGE}" "${branch}~1"
+        ) || return 1
+    done
+
+    delete_refs "refs/heads/tags-${plugin}-*"
+)}
+
+trim_branches()
+{(
+    cd "${git_path}"
+
+    local plugin="$1"
+
+    echo "Trimming branches for ${plugin}"
+
+    for branch in $(git branch -a | grep -vP "master|${plugin}-") ; do
+        git branch -D ${branch}
+    done
+
+    filter_branch --tag-name-filter cat --prune-empty --subdirectory-filter "${plugin}" -- --all
+    reset_dates -- --all
+)}
+
+export_batchedit()
+{(
+    clone_repo "${base_path}/batchedit"
+
+    git_path="${base_path}/batchedit"
+
+    create_tags "batchedit"
+    trim_branches "batchedit"
 )}
 
 main()
@@ -322,6 +391,8 @@ main()
     delete_branch "svn/tags/refnotes-1204291450"
 
     clean_repo
+
+    export_batchedit
 }
 
 main "$@"
