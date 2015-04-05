@@ -432,6 +432,7 @@ main()
     export_plugin "color"
     export_plugin "columns"
     export_plugin "entity"
+    export_plugin "margin"
 }
 
 main "$@"
