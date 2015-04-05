@@ -248,10 +248,9 @@ create_tags()
 {(
     cd "${git_path}"
 
-    local plugin="$1"
-    local branch
-
     echo "Creating tags for ${plugin}"
+
+    local branch
 
     for branch in $(git for-each-ref --format="%(refname)" "refs/heads/tags-${plugin}-*" | sed -re "s/refs\/heads\///") ; do
         local tag=t.$(echo ${branch} | sed -re "s/tags-${plugin}-(.+)/\1/")
@@ -278,8 +277,6 @@ trim_branches()
 {(
     cd "${git_path}"
 
-    local plugin="$1"
-
     echo "Trimming branches for ${plugin}"
 
     for branch in $(git branch -a | grep -vP "master|${plugin}-") ; do
@@ -290,14 +287,17 @@ trim_branches()
     reset_dates -- --all
 )}
 
-export_batchedit()
+export_plugin()
 {(
-    clone_repo "${base_path}/batchedit"
+    local plugin="$1"
+    local plugin_repo="${base_path}/${plugin}"
 
-    git_path="${base_path}/batchedit"
+    clone_repo "${plugin_repo}"
 
-    create_tags "batchedit"
-    trim_branches "batchedit"
+    git_path="${plugin_repo}"
+
+    create_tags
+    trim_branches
 )}
 
 main()
@@ -392,7 +392,8 @@ main()
 
     clean_repo
 
-    export_batchedit
+    export_plugin "batchedit"
+    export_plugin "changes"
 }
 
 main "$@"
