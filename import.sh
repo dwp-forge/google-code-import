@@ -317,6 +317,13 @@ export_plugin_columns()
     git branch -d odt-support
 )}
 
+export_plugin_qna()
+{(
+    cd "${git_path}"
+
+    git branch -d custom-headers
+)}
+
 export_plugin()
 {(
     local plugin="$1"
@@ -332,6 +339,7 @@ export_plugin()
 
     case "${plugin}" in
     "columns") export_plugin_columns ;;
+    "qna") export_plugin_qna ;;
     esac
 )}
 
@@ -434,6 +442,7 @@ main()
     export_plugin "entity"
     export_plugin "margin"
     export_plugin "pagelist"
+    export_plugin "qna"
 }
 
 main "$@"
