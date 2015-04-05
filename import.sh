@@ -433,6 +433,7 @@ main()
     export_plugin "columns"
     export_plugin "entity"
     export_plugin "margin"
+    export_plugin "pagelist"
 }
 
 main "$@"
