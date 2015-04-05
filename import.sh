@@ -431,6 +431,7 @@ main()
     export_plugin "changes"
     export_plugin "color"
     export_plugin "columns"
+    export_plugin "entity"
 }
 
 main "$@"
