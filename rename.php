@@ -84,6 +84,7 @@ function translate($message, $revision) {
         "68" => "Added View & Edit links",
         "69" => "Release of 2009-02-14",
         "86" => array("Release of 2009-03-01\n\n", "First alpha version of columns3.\n"),
+        "88" => array("+ Simplified markup for pre-defined colors (markers)\n", "+ Hilited plugin syntax (uses marker 0)\n"),
         "124" => array("Fixed sub-namespace scoping\n\n", "Use the start of the parent namespace's current scope as\nthe sub-namespace creation point.\n"),
         "125" => array("Sort style blocks before insertion into calls\n\n", "This ensures that a parent namespace is styled before\nits sub-namespaces.\n"),
         "128" => array("Fixed section editing\n\n", "Look-ahead patterns are removed to allow syntax matching\nduring section editing.\n"),

@@ -394,6 +394,7 @@ main()
 
     export_plugin "batchedit"
     export_plugin "changes"
+    export_plugin "color"
 }
 
 main "$@"
