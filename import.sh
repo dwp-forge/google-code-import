@@ -279,12 +279,42 @@ trim_branches()
 
     echo "Trimming branches for ${plugin}"
 
-    for branch in $(git branch -a | grep -vP "master|${plugin}-") ; do
+    local branch
+
+    for branch in $(git branch -a | sed -re "s/^\*? +(.+)/\1/" | grep -vP "master|${plugin}-") ; do
         git branch -D ${branch}
     done
 
     filter_branch --tag-name-filter cat --prune-empty --subdirectory-filter "${plugin}" -- --all
     reset_dates -- --all
+)}
+
+rename_branches()
+{(
+    cd "${git_path}"
+
+    echo "Renaming branches for ${plugin}"
+
+    local branch
+
+    for branch in $(git branch -a | sed -re "s/^\*? +(.+)/\1/" | grep -P "${plugin}-") ; do
+        local new_name=$(echo ${branch} | sed -re "s/${plugin}-(.+)/\1/")
+
+        git branch ${new_name} ${branch} &&
+        git branch -D ${branch}
+    done
+
+)}
+
+export_plugin_columns()
+{(
+    cd "${git_path}"
+
+    git checkout master &&
+    git merge --ff-only v3 &&
+    git branch -d v3
+
+    git branch -d odt-support
 )}
 
 export_plugin()
@@ -298,6 +328,11 @@ export_plugin()
 
     create_tags
     trim_branches
+    rename_branches
+
+    case "${plugin}" in
+    "columns") export_plugin_columns ;;
+    esac
 )}
 
 main()
@@ -395,6 +430,7 @@ main()
     export_plugin "batchedit"
     export_plugin "changes"
     export_plugin "color"
+    export_plugin "columns"
 }
 
 main "$@"
