@@ -533,6 +533,7 @@ main()
     export_plugin "qna"
     export_plugin "refnotes"
     export_plugin "replace"
+    export_plugin "spacer"
 }
 
 main "$@"
