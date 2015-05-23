@@ -532,6 +532,7 @@ main()
     export_plugin "pagelist"
     export_plugin "qna"
     export_plugin "refnotes"
+    export_plugin "replace"
 }
 
 main "$@"
