@@ -429,6 +429,8 @@ export_plugin()
     "refnotes") export_plugin_refnotes ;;
     *) export_plugin_base ;;
     esac
+
+    clean_repo
 )}
 
 main()
