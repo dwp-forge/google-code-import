@@ -273,6 +273,36 @@ create_tags()
     delete_refs "refs/heads/tags-${plugin}-*"
 )}
 
+tag_release_revision()
+{(
+    cd "${git_path}"
+
+    local branch="$1"
+    local revision="$2"
+
+    echo "Tagging release ${revision}"
+
+    local commit=$(get_revision_commit "${branch}" ${revision})
+
+    if [[ "${commit}" == "" ]] ; then
+        echo "Failed to find revision ${revision} on ${branch}"
+        return 1
+    fi
+
+    export GIT_MESSAGE=$(git log ${commit} -1 --pretty=format:%B | sed -re "s/^r[0-9]+: //")
+    export GIT_AUTHOR_DATE=$(git log ${commit} -1 --pretty=format:%ad)
+    export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
+
+    local release=$(echo "${GIT_MESSAGE}" | grep Release | sed -re "s/Release (of )?([-0-9]+).*/\2/")
+
+    if [[ "${release}" == "" ]] ; then
+        echo "Revision ${revision} is not a release"
+        return 1
+    fi
+
+    git tag -a "v.${release}" -m "${GIT_MESSAGE}" "${commit}"
+)}
+
 trim_branches()
 {(
     cd "${git_path}"
@@ -312,6 +342,13 @@ export_plugin_base()
     rename_branches
 }
 
+export_plugin_entity()
+{(
+    export_plugin_base
+
+    tag_release_revision "master" r7
+)}
+
 export_plugin_columns()
 {(
     export_plugin_base
@@ -323,6 +360,9 @@ export_plugin_columns()
     git branch -d v3
 
     git branch -d odt-support
+
+    tag_release_revision "master" r3
+    tag_release_revision "master" r4
 )}
 
 export_plugin_qna()
@@ -384,6 +424,7 @@ export_plugin()
 
     case "${plugin}" in
     "columns") export_plugin_columns ;;
+    "entity") export_plugin_entity ;;
     "qna") export_plugin_qna ;;
     "refnotes") export_plugin_refnotes ;;
     *) export_plugin_base ;;
