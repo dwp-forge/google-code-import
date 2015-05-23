@@ -534,6 +534,7 @@ main()
     export_plugin "refnotes"
     export_plugin "replace"
     export_plugin "spacer"
+    export_plugin "tablewidth"
 }
 
 main "$@"
