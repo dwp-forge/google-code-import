@@ -303,11 +303,19 @@ rename_branches()
         git branch ${new_name} ${branch} &&
         git branch -D ${branch}
     done
-
 )}
+
+export_plugin_base()
+{
+    create_tags
+    trim_branches
+    rename_branches
+}
 
 export_plugin_columns()
 {(
+    export_plugin_base
+
     cd "${git_path}"
 
     git checkout master &&
@@ -319,9 +327,50 @@ export_plugin_columns()
 
 export_plugin_qna()
 {(
+    export_plugin_base
+
     cd "${git_path}"
 
     git branch -d custom-headers
+)}
+
+export_plugin_refnotes()
+{(
+    cd "${git_path}"
+
+    local branches
+    local branch
+
+    for branch in $(git branch -a | sed -re "s/^\*? +(.+)/\1/") ; do
+        branches="${branches};${branch}:$(git log --format=%h ${branch} -1)"
+    done
+
+    local plugin="footrefs"
+
+    trim_branches
+
+    local footrefs=$(git log --format=%H "master~1" -1)
+
+    git checkout ${footrefs}
+    git branch -D "master"
+
+    for branch in $(echo ${branches:1} | sed -re "s/;/ /g") ; do
+        git branch ${branch%:*} ${branch#*:}
+    done
+
+    git checkout "master"
+
+    plugin="refnotes"
+
+    export_plugin_base
+
+    local refnotes=$(git log --format=%H $(get_revision_commit "master" r50) -1)
+
+    echo $refnotes $footrefs >> .git/info/grafts
+
+    filter_branch --tag-name-filter cat -- --all
+
+    rm .git/info/grafts
 )}
 
 export_plugin()
@@ -333,13 +382,11 @@ export_plugin()
 
     git_path="${plugin_repo}"
 
-    create_tags
-    trim_branches
-    rename_branches
-
     case "${plugin}" in
     "columns") export_plugin_columns ;;
     "qna") export_plugin_qna ;;
+    "refnotes") export_plugin_refnotes ;;
+    *) export_plugin_base ;;
     esac
 )}
 
@@ -443,6 +490,7 @@ main()
     export_plugin "margin"
     export_plugin "pagelist"
     export_plugin "qna"
+    export_plugin "refnotes"
 }
 
 main "$@"
